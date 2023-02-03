@@ -24,7 +24,7 @@
         <style>
             .banner-bg {
                 clip-path: polygon(30% 0%, 70% 0%, 100% 0, 100% 100%, 70% 95%, 30% 98%, 0 92%, 0 0);
-                background: rgb(1, 43, 76, 0.95) !important;
+                background: rgba(1, 43, 76, 0.95) !important;
 
             }
             
