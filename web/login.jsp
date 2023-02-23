@@ -46,15 +46,15 @@
                                 Sign in to Continue
                             </div>
                             <div class="card-body">
-                                <form>
+                                <form action="login" method="POST">
                                     <div class="mb-3">
                                         <label for="exampleInputEmail1" class="form-label">Email address</label>
-                                        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+                                        <input name="email" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
                                         <div id="emailHelp" class="form-text">We'll never share your email with anyone else or spam you.</div>
                                     </div>
                                     <div class="mb-3">
                                         <label for="exampleInputPassword1" class="form-label">Password</label>
-                                        <input type="password" class="form-control" id="exampleInputPassword1">
+                                        <input name="password" type="password" class="form-control" id="exampleInputPassword1">
                                     </div>
                                     <div class="d-grid gap-2 mb-3">
                                         <button type="submit" class="btn btn-outline-dark">Sign In <span class="fa fa-paper-plane-o"></span></button>

@@ -27,7 +27,7 @@
                 background: rgba(1, 43, 76, 0.95) !important;
 
             }
-            
+
             a {
                 text-decoration: none;
             }
@@ -46,28 +46,31 @@
                             <div class="card-header text-center">
                                 Sign up to Continue
                             </div>
-                            <form class="card-body">
+                            <form id="registerForm" class="card-body" action="register" method="POST">
                                 <div class="row mb-3">
                                     <div class="col">
-                                        <input type="text" class="form-control" placeholder="First name" aria-label="First name">
+                                        <input type="text" class="form-control" placeholder="First name" aria-label="First name" name="firstName">
                                     </div>
                                     <div class="col">
-                                        <input type="text" class="form-control" placeholder="Last name" aria-label="Last name">
+                                        <input type="text" class="form-control" placeholder="Last name" aria-label="Last name" name="lastName">
                                     </div>
                                 </div>
                                 <div class="mb-3">
                                     <label for="exampleInputEmail1" class="form-label">Email address</label>
-                                    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+                                    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" name="email">
                                     <div id="emailHelp" class="form-text">We'll never share your email with anyone else or spam you.</div>
                                 </div>
-                                <div class="mb-3">
+                                 <div class="mb-3">
                                     <label for="exampleInputPassword1" class="form-label">Password</label>
-                                    <input type="password" class="form-control" id="exampleInputPassword1">
+                                    <input type="password" class="form-control" id="exampleInputPassword1" name="password">
                                 </div>
+                                <div class="container text-center" id="loader" style="display: none;">
+                                    <p><span class="fa fa-refresh fa-spin fa-1x"></span> Please wait... </p>   
+                                </div>
+
                                 <div class="d-grid gap-2 mb-3">
-                                    <button type="submit" class="btn btn-outline-dark">Sign Up <span class="fa fa-paper-plane-o"></span></button>
+                                    <button type="submit" id="submit-button" class="btn btn-outline-dark">Sign Up <span class="fa fa-paper-plane-o"></span></button>
                                 </div>
-                                
                                 <div>Already registered ? Continue to <a href="login.jsp">Log in</a>.</div>
                             </form>
                         </div>
@@ -81,6 +84,48 @@
         <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js" integrity="sha384-mQ93GR66B00ZXjt0YO5KlohRA5SY2XofN4zfuZxLkoj1gXtW8ANNCe9d5Y3eG5eD" crossorigin="anonymous"></script>
-        <script src="js/index.js" type="text/javascript"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+        <script>
+
+            $(document).ready(function () {
+                $('#registerForm').on('submit', function (event) {
+                    event.preventDefault();
+
+                    $("#submit-button").hide();
+                    $("#loader").show();
+
+                    let formData = new FormData(this);
+
+                    // send to register servlet
+                    $.ajax({
+                        url: "register",
+                        type: "POST",
+                        data: formData,
+                        success: function (data, textStatus, jqXHR) {
+                            $("#submit-button").show();
+                            $("#loader").hide();
+                            
+                            $('#registerForm').get(0).reset();
+                            
+                            swal("Welcome to Wave!", "Login to continue...", "success", {
+                                button: null
+                            }).then(_ => window.location = "login.jsp");
+                            
+                        },
+                        error: function (data, textStatus, errorThrown) {
+                            console.log(errorThrown);
+                            $("#submit-button").show();
+                            $("#loader").hide();
+                            
+                            swal("Oh Snap!", "Something went Wrong", "error", {
+                                button: "Try Again!"
+                            });
+                        },
+                        processData: false,
+                        contentType: false
+                    });
+                });
+            });
+        </script>
     </body>
 </html>
