@@ -4,6 +4,7 @@
     Author     : dibyajyotimishra
 --%>
 
+<%@page import="com.wave.entities.Message"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -45,6 +46,23 @@
                             <div class="card-header text-center">
                                 Sign in to Continue
                             </div>
+
+                            <%
+                                Message message = (Message) session.getAttribute("message");
+                                if (message != null) {
+                            %>
+
+                            <div class="alert <%= message.getCssClass() %> alert-dismissible fade show" role="alert">
+                                <strong> <%= message.getMessageReaction() %> </strong> <%= message.getMessageContent() %>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+
+
+                            <%
+                                session.removeAttribute("message");
+                                }
+                            %>
+
                             <div class="card-body">
                                 <form action="login" method="POST">
                                     <div class="mb-3">
@@ -74,6 +92,6 @@
         <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js" integrity="sha384-mQ93GR66B00ZXjt0YO5KlohRA5SY2XofN4zfuZxLkoj1gXtW8ANNCe9d5Y3eG5eD" crossorigin="anonymous"></script>
-        
+
     </body>
 </html>

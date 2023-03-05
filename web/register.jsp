@@ -1,9 +1,3 @@
-<%-- 
-    Document   : register
-    Created on : 02-Feb-2023, 2:03:48 PM
-    Author     : dibyajyotimishra
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -25,9 +19,7 @@
             .banner-bg {
                 clip-path: polygon(30% 0%, 70% 0%, 100% 0, 100% 100%, 70% 95%, 30% 98%, 0 92%, 0 0);
                 background: rgba(1, 43, 76, 0.95) !important;
-
             }
-
             a {
                 text-decoration: none;
             }
@@ -60,7 +52,7 @@
                                     <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" name="email">
                                     <div id="emailHelp" class="form-text">We'll never share your email with anyone else or spam you.</div>
                                 </div>
-                                 <div class="mb-3">
+                                <div class="mb-3">
                                     <label for="exampleInputPassword1" class="form-label">Password</label>
                                     <input type="password" class="form-control" id="exampleInputPassword1" name="password">
                                 </div>
@@ -86,40 +78,33 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js" integrity="sha384-mQ93GR66B00ZXjt0YO5KlohRA5SY2XofN4zfuZxLkoj1gXtW8ANNCe9d5Y3eG5eD" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
         <script>
-
             $(document).ready(function () {
                 $('#registerForm').on('submit', function (event) {
                     event.preventDefault();
-
                     $("#submit-button").hide();
                     $("#loader").show();
-
                     let formData = new FormData(this);
-
                     // send to register servlet
                     $.ajax({
                         url: "register",
                         type: "POST",
                         data: formData,
                         success: function (data, textStatus, jqXHR) {
+                            console.log(data);
                             $("#submit-button").show();
                             $("#loader").hide();
-                            
+
                             $('#registerForm').get(0).reset();
-                            
-                            swal("Welcome to Wave!", "Login to continue...", "success", {
-                                button: null
-                            }).then(_ => window.location = "login.jsp");
-                            
-                        },
-                        error: function (data, textStatus, errorThrown) {
-                            console.log(errorThrown);
-                            $("#submit-button").show();
-                            $("#loader").hide();
-                            
-                            swal("Oh Snap!", "Something went Wrong", "error", {
-                                button: "Try Again!"
-                            });
+
+                            if (data == "Success") {
+                                swal("Welcome to Wave!", "Login to continue...", "success", {
+                                    button: null
+                                }).then(_ => window.location = "login.jsp");
+                            } else {
+                                swal("Oh Snap!", "Something went Wrong", "error", {
+                                    button: "Try Again!"
+                                });
+                            }
                         },
                         processData: false,
                         contentType: false

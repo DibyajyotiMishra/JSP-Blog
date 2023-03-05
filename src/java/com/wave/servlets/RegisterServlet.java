@@ -1,15 +1,18 @@
 package com.wave.servlets;
 
 import com.wave.dao.UserDao;
+import com.wave.entities.Message;
 import com.wave.entities.User;
 import com.wave.helpers.ConnectionProvider;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -32,7 +35,7 @@ public class RegisterServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try ( PrintWriter out = response.getWriter()) {
+        try(PrintWriter out = response.getWriter()) {
             // Fetch form data...
             String firstName = request.getParameter("firstName");
             String lastName = request.getParameter("lastName");
@@ -46,8 +49,9 @@ public class RegisterServlet extends HttpServlet {
             UserDao userDao = new UserDao(ConnectionProvider.getConnection());
             if(userDao.saveUserData(user)) {
                 out.println("Success");
-            } else {
-                System.out.println("Error occured");
+            } 
+            else {
+                out.println("Error");
             }
         }
     }

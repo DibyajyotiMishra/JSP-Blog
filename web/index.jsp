@@ -54,18 +54,26 @@
                         information with ease and stay ahead of the curve. Join me on this journey, and get ready to make some waves!
                     </p>
 
+                    <%
+                        if (session.getAttribute("currentUser") == null) {
+                    %>
+
                     <a href="register.jsp" class="btn btn-outline-light">Hope on. It's free! <span class="fa fa-handshake-o"></span></a>
                     <a href="login.jsp" class="btn btn-outline-light">Login <span class="fa fa-child"></span></a>
+
+                    <%
+                        }
+                    %>
                     <div class="mb-5"></div>
                     <br>
                 </div>
             </div>
         </div>
 
-        
+
         <br>
         <br>
-        
+
         <!--Cards-->
         <div class="container mb-5">
             <div class="row">

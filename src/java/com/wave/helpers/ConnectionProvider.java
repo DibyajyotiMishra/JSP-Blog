@@ -22,6 +22,10 @@ public class ConnectionProvider {
                 String dbPassword = "password";
 
                 connection = DriverManager.getConnection(dbUrl, dbUserName, dbPassword);
+
+                if (connection != null) {
+                    System.out.println("Database connected.");
+                }
             }
 
         } catch (Exception e) {

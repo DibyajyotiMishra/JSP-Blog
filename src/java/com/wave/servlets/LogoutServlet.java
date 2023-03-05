@@ -1,9 +1,6 @@
 package com.wave.servlets;
 
-import com.wave.dao.UserDao;
 import com.wave.entities.Message;
-import com.wave.entities.User;
-import com.wave.helpers.ConnectionProvider;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -17,8 +14,8 @@ import javax.servlet.http.HttpSession;
  *
  * @author dibyajyotimishra
  */
-@WebServlet(name = "LoginServlet", urlPatterns = {"/login"})
-public class LoginServlet extends HttpServlet {
+@WebServlet(name = "LogoutServlet", urlPatterns = {"/logout"})
+public class LogoutServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -34,22 +31,11 @@ public class LoginServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try ( PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
-            String userEmail = request.getParameter("email");
-            String userPassword = request.getParameter("password");
-            
-            UserDao userDao = new UserDao(ConnectionProvider.getConnection());
-            User currentUser = userDao.getUserByEmailAndPassword(userEmail, userPassword);
-            
-            if(currentUser == null) {
-                Message message = new Message("Holy guacamole!", "Invalid credentails.", "error", "alert-danger");
-                HttpSession session = request.getSession();
-                session.setAttribute("message", message);
-                response.sendRedirect("login.jsp");
-            } else {
-                HttpSession session = request.getSession();
-                session.setAttribute("currentUser", currentUser);
-                response.sendRedirect("profile.jsp");
-            }
+            HttpSession session = request.getSession();
+            session.removeAttribute("currentUser");
+            Message message = new Message("Good Bye!!!", "See you soon...", "success", "alert-primary");
+            session.setAttribute("login_success_message", message);
+            response.sendRedirect("login.jsp");
         }
     }
 
