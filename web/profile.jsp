@@ -4,6 +4,7 @@
    Author     : dibyajyotimishra
 --%>
 
+<%@page import="com.wave.entities.Message"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="com.wave.entities.User"%>
 <%@page errorPage="error.jsp" %>
@@ -19,7 +20,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Welcome | Wave</title>
-        
+
         <!--Favicon Scripts-->
         <link rel="apple-touch-icon" sizes="180x180" href="img/favicon/apple-touch-icon.png">
         <link rel="icon" type="image/png" sizes="32x32" href="img/favicon/favicon-32x32.png">
@@ -56,7 +57,7 @@
                         <li class="nav-item">
                             <a class="nav-link" href="#">About</a>
                         </li>
-                        
+
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Genres
@@ -71,7 +72,7 @@
                     </ul>
                     <ul class="navbar-nav mr-right">
                         <li class="nav-item">
-                            <p class="nav-link disabled"><span class="fa fa-user"></span> <%= user.getFirstName() + " " + user.getLastName() %></p>
+                            <a href="#!" data-bs-toggle="modal" data-bs-target="#profileModal" class="nav-link"><span class="fa fa-user"></span> <%= user.getFirstName() + " " + user.getLastName()%></a>
                         </li>
                         <li class="nav-item">
                             <a class="btn btn-outline-light" href="logout">Logout</a>
@@ -83,14 +84,102 @@
 
         <!--navbar-->
 
+        <%
+            Message message = (Message) session.getAttribute("message");
+            if (message != null) {
+        %>
+
+        <div class="alert <%= message.getCssClass()%> alert-dismissible fade show" role="alert">
+            <strong> <%= message.getMessageReaction()%> </strong> <%= message.getMessageContent()%>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
 
 
-        
-        
+        <%
+                session.removeAttribute("message");
+            }
+        %>
+
+
+
+        <!--Profile Modal-->
+
+        <!-- Modal -->
+        <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">User Details</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container text-left">
+                            <img class="image-fluid ml-3" style="width: 100px;" src="./images/<%= user.getProfilePicture()%>" alt="alt"/>
+                            <div id="profile-details">
+                                <p>Name: <%= user.getFirstName() + " " + user.getLastName()%></p>
+                                <p>Email: <%= user.getEmail()%></p>
+                                <p style="font-style: italic;"><%= user.getRegisteredMonth()%></p>  
+                            </div>
+                            <div id="profile-edit" style="display: none;">
+                                <h3>Edit Your Profile</h3>
+                                <form action="edit" method="POST" enctype="multipart/form-data">
+                                    <div class="row mb-3">
+                                        <div class="col">
+                                            <input type="text" class="form-control" aria-label="First name" name="firstName" value="<%= user.getFirstName()%>">
+                                        </div>
+                                        <div class="col">
+                                            <input type="text" class="form-control" aria-label="Last name" name="lastName" value="<%= user.getLastName()%>">
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="exampleInputPassword1" class="form-label">Password</label>
+                                        <input type="text" class="form-control" id="exampleInputPassword1" name="password">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="exampleInputFile" class="form-label">Upload Profile Picture</label>
+                                        <input type="file" accept="image" class="form-control" id="exampleInputFile" name="profilePicture">
+                                    </div>
+                                    <button type="submit" id="save-btn" class="btn btn-outline-primary" style="display: none">Save</button>
+                                </form>
+
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button id="edit-btn" class="btn btn-outline-primary">Edit</button>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Profile Modal-->
+
+
         <!--All JS scripts-->
         <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js" integrity="sha384-mQ93GR66B00ZXjt0YO5KlohRA5SY2XofN4zfuZxLkoj1gXtW8ANNCe9d5Y3eG5eD" crossorigin="anonymous"></script>
         <script src="js/index.js" type="text/javascript"></script>
+        <script>
+            $(document).ready(function () {
+                let editStatus = false;
+                $('#edit-btn').click(function () {
+                    editStatus = !(editStatus == true);
+                    if (editStatus) {
+                        $('#profile-details').hide();
+                        $('#profile-edit').show();
+                        $('#save-btn').show();
+                        $(this).text("Exit").removeClass("btn-outline-primary").addClass("btn-outline-danger")
+                    } else {
+                        $('#profile-details').show();
+                        $('#profile-edit').hide();
+                        $('#save-btn').hide();
+                        $(this).text("Edit").removeClass("btn-outline-danger").addClass("btn-outline-primary");
+                    }
+
+                });
+            });
+        </script>
     </body>
 </html>

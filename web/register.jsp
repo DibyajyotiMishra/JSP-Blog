@@ -91,20 +91,23 @@
                         data: formData,
                         success: function (data, textStatus, jqXHR) {
                             console.log(data);
+                            if(data == "ok") {
+                                console.log("Hi");
+                            }
                             $("#submit-button").show();
                             $("#loader").hide();
 
                             $('#registerForm').get(0).reset();
 
-                            if (data == "Success") {
-                                swal("Welcome to Wave!", "Login to continue...", "success", {
-                                    button: null
-                                }).then(_ => window.location = "login.jsp");
-                            } else {
+                            if (data == "Error") {
                                 swal("Oh Snap!", "Something went Wrong", "error", {
                                     button: "Try Again!"
                                 });
                             }
+                            } else {
+                             swal("Welcome to Wave!", "Login to continue...", "success", {
+                                    button: null
+                                }).then(_ => window.location = "login.jsp");   
                         },
                         processData: false,
                         contentType: false

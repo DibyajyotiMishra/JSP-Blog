@@ -23,12 +23,14 @@ public class UserDao {
     public boolean saveUserData(User user) {
         boolean isSuccessful = false;
         try { 
-            String query = "insert into users(firstName, lastName, email, password) values(?, ?, ?, ?)";
+            String query = "insert into users(firstName, lastName, email, password, registeredMonth, profilePicture) values(?, ?, ?, ?, ?, ?)";
             PreparedStatement statement = this.connection.prepareStatement(query);
             statement.setString(1, user.getFirstName());
             statement.setString(2, user.getLastName());
             statement.setString(3, user.getEmail());
             statement.setString(4, user.getPassword());
+            statement.setString(5, user.getRegisteredMonth());
+            statement.setString(6, user.getProfilePicture());
 
             statement.executeUpdate();
 
@@ -58,13 +60,17 @@ public class UserDao {
                 String userLastName = result.getString("lastName");
                 String userEmail = email;
                 String userImage = result.getString("profilePicture");
+                String userRegistrationMonth = result.getString("registeredMonth");
+                int userId = result.getInt("id");
+                String userPassword = result.getString("password");
                 
                 user.setFirstName(userFirstName);
                 user.setLastName(userLastName);
                 user.setEmail(userEmail);
                 user.setProfilePicture(userImage);
-                
-                
+                user.setRegisteredMonth(userRegistrationMonth);
+                user.setUserId(userId);
+                user.setPassword(userPassword);
                 
             }
             
@@ -73,5 +79,24 @@ public class UserDao {
         }
         
         return user;
+    }
+    
+    public boolean updateUserData(User user) {
+        boolean isSuccessful = false;
+        try {
+           String query = "update users set firstName=?, lastName=?, password=?, profilePicture=? where id=?";
+           PreparedStatement statement = this.connection.prepareStatement(query);
+           statement.setString(1, user.getFirstName());
+           statement.setString(2, user.getLastName());
+           statement.setString(3, user.getPassword());
+           statement.setString(4, user.getProfilePicture());
+           statement.setInt(5, user.getUserId());
+           
+           statement.executeUpdate();
+           isSuccessful = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return isSuccessful;
     }
 }
