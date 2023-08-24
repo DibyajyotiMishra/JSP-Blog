@@ -4,6 +4,10 @@
    Author     : dibyajyotimishra
 --%>
 
+<%@page import="com.wave.entities.Category"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="com.wave.dao.BlogDao"%>
+<%@page import="com.wave.helpers.ConnectionProvider"%>
 <%@page import="com.wave.entities.Message"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="com.wave.entities.User"%>
@@ -68,6 +72,9 @@
                                 <li><a class="dropdown-item" href="#">Databases</a></li>
                                 <li><a class="dropdown-item" href="#">Tools</a></li>
                             </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="modal" data-bs-target="#add-blog-modal" href="#!">Write</a>
                         </li>
                     </ul>
                     <ul class="navbar-nav mr-right">
@@ -155,6 +162,55 @@
 
         <!--Profile Modal-->
 
+        <!--Add New Blog Modal--> 
+
+        <!-- Modal -->
+        <div class="modal fade" id="add-blog-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Start Writing your new blog.</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="createNewPost" method="POST">
+                            <div class="form-group">
+                                <label class="form-label">Blog Title</label>
+                                <input type="text" placeholder="An Awesome Title" class="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Blog Title</label>
+                                <textarea type="text" placeholder="Contents..." rows="4" class="form-control"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Blog Image</label>
+                                <input type="file" class="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Blog Genre</label>
+                                <select class="form-control">
+                                    <option selected disabled>Pick a Genre.</option>
+                                    <% 
+                                        BlogDao blogDao = new BlogDao(ConnectionProvider.getConnection());
+                                        ArrayList<Category> categories = blogDao.getAllCategories();
+                                        for(Category category: categories) {
+                                        
+                                    %>
+                                    <option><%= category.getCategoryName() %></option>
+                                    <% } %>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Post</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Add New Blog Modal-->
 
         <!--All JS scripts-->
         <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
