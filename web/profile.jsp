@@ -173,38 +173,38 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form action="createNewPost" method="POST">
+                        <form action="createNewBlog" method="POST" id="createNewBlogForm">
                             <div class="form-group">
                                 <label class="form-label">Blog Title</label>
-                                <input type="text" placeholder="An Awesome Title" class="form-control" />
+                                <input name="blogTitle" type="text" placeholder="An Awesome Title" class="form-control" />
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Blog Title</label>
-                                <textarea type="text" placeholder="Contents..." rows="4" class="form-control"></textarea>
+                                <textarea name="blogContent" type="text" placeholder="Contents..." rows="4" class="form-control"></textarea>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Blog Image</label>
-                                <input type="file" class="form-control" />
+                                <input name="blogImage" type="file" class="form-control" />
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Blog Genre</label>
-                                <select class="form-control">
+                                <select name="categoryId" class="form-control">
                                     <option selected disabled>Pick a Genre.</option>
-                                    <% 
+                                    <%
                                         BlogDao blogDao = new BlogDao(ConnectionProvider.getConnection());
                                         ArrayList<Category> categories = blogDao.getAllCategories();
-                                        for(Category category: categories) {
-                                        
+                                        for (Category category : categories) {
+
                                     %>
-                                    <option><%= category.getCategoryName() %></option>
-                                    <% } %>
+                                    <option value="<%= category.getCategoryId()%>"><%= category.getCategoryName()%></option>
+                                    <% }%>
                                 </select>
                             </div>
+                            <div class="container text-center mt-5">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Post</button>
+                            </div>
                         </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Post</button>
                     </div>
                 </div>
             </div>
@@ -216,6 +216,9 @@
         <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js" integrity="sha384-mQ93GR66B00ZXjt0YO5KlohRA5SY2XofN4zfuZxLkoj1gXtW8ANNCe9d5Y3eG5eD" crossorigin="anonymous"></script>
+        <!--<srcipt src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></srcipt>-->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        
         <script src="js/index.js" type="text/javascript"></script>
         <script>
             $(document).ready(function () {
@@ -237,5 +240,39 @@
                 });
             });
         </script>
-    </body>
+        <!-- Add New Blog--> 
+        <script>
+            $(document).ready(function (e) {
+                $("#createNewBlogForm").on("submit", function (event) {
+                    event.preventDefault();
+                    console.log("Form Submitted...")
+                    let formData = new FormData(this);
+
+                    $.ajax({
+                        url: "createNewBlog",
+                        type: "POST",
+                        data: formData,
+                        success: function (data, textStatus, jqXHR) {
+                            console.log(data);
+                            if(data.trim() == "success") {
+                                Swal.fire({
+                                    title: "Yayyy!!!",
+                                    icon: 'success',
+                                    text: "Blog is created successfully.",
+                                    showCloseButton: true,
+                                });
+                            } else {
+                                Swal.fire({ title: "Aiyooo!!!", text: "Blog couldnot be saved.", icon: "error", showCloseButton: true });
+                            }
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+
+                        },
+                        processData: false,
+                        contentType: false
+                    })
+                })
+            });
+        </script>
+</body>
 </html>

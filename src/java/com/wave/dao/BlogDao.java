@@ -4,8 +4,10 @@
  */
 package com.wave.dao;
 
+import com.wave.entities.Blog;
 import com.wave.entities.Category;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -43,5 +45,27 @@ public class BlogDao {
         
         return categories;
     }
+    
+    public boolean saveBlog(Blog blog) {
+        boolean isSuccess = false;
+        
+        try {
+            String query = "insert into blogs(title, content, image, categoryId, author, createdOn) values(?,?,?,?,?,?)";
+            
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setString(1, blog.getBlogTitle());
+            statement.setString(2, blog.getBlogContent());
+            statement.setString(3, blog.getBlogImage());
+            statement.setInt(4, blog.getCategoryId());
+            statement.setInt(5, blog.getAuthorId());
+            statement.setString(6, blog.getCreatedOn());
+            
+            statement.executeUpdate();
+            isSuccess = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return isSuccess;
+    } 
     
 }

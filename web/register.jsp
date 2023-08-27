@@ -91,7 +91,7 @@
                         data: formData,
                         success: function (data, textStatus, jqXHR) {
                             console.log(data);
-                            if(data == "ok") {
+                            if(data.trim() == "ok") {
                                 console.log("Hi");
                             }
                             $("#submit-button").show();
@@ -99,7 +99,7 @@
 
                             $('#registerForm').get(0).reset();
 
-                            if (data == "Error") {
+                            if (data.trim() == "Error") {
                                 swal("Oh Snap!", "Something went Wrong", "error", {
                                     button: "Try Again!"
                                 });

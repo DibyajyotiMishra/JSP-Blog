@@ -1,11 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package com.wave.servlets;
 
-import com.wave.dao.UserDao;
-import com.wave.entities.Message;
+import com.wave.dao.BlogDao;
+import com.wave.entities.Blog;
 import com.wave.entities.User;
 import com.wave.helpers.ConnectionProvider;
 import com.wave.helpers.FileHandler;
@@ -24,8 +20,9 @@ import javax.servlet.http.Part;
  *
  * @author dibyajyotimishra
  */
+
 @MultipartConfig
-public class EditServlet extends HttpServlet {
+public class CreateBlogServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -40,49 +37,26 @@ public class EditServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try ( PrintWriter out = response.getWriter()) {
-            String firstName = request.getParameter("firstName");
-            String lastName = request.getParameter("lastName");
-            String password = request.getParameter("password");
-            Part image = request.getPart("profilePicture");
-            String profilePicture = "";
-            if (image.getSize() != 0) {
-                profilePicture = image.getSubmittedFileName();
-            }
-
+            /* TODO output your page here. You may use following sample code. */
+            
+            String blogTitle = request.getParameter("blogTitle");
+            String blogContent = request.getParameter("blogContent");
+            int categoryId = Integer.parseInt(request.getParameter("categoryId"));
+            Part file = request.getPart("blogImage");
+            String blogImage = file.getSubmittedFileName();
             HttpSession session = request.getSession();
             User user = (User) session.getAttribute("currentUser");
-            if (firstName != null && firstName.length() > 0) {
-                user.setFirstName(firstName);
-            }
-            if (lastName != null && lastName.length() > 0) {
-                user.setLastName(lastName);
-            }
-            if (password != null && password.length() > 0) {
-                user.setPassword(password);
-            }
-            if ((profilePicture != null && profilePicture != "") && image.getSize() != 0) {
-                user.setProfilePicture(profilePicture);
-            }
-
-            UserDao userDao = new UserDao(ConnectionProvider.getConnection());
-            boolean isUpdateSuccessful = userDao.updateUserData(user);
-
-            if (isUpdateSuccessful) {
-                String path = request.getServletContext().getRealPath("/") + "images" + File.separator + user.getProfilePicture();
-//                if(FileHandler.deleteFile(path)) {
-                if (FileHandler.saveFile(image.getInputStream(), path)) {
-//                        out.println("Success");
-                    Message message = new Message("Yay!", "Profile Updated", "success", "alert-success");
-                    session.setAttribute("message", message);
-
-                }
-//                }
+            int authorId = user.getUserId();
+            
+            Blog blog = new Blog(blogTitle, blogContent, blogImage, categoryId, authorId);
+            BlogDao blogDao = new BlogDao(ConnectionProvider.getConnection());
+            if(blogDao.saveBlog(blog)) {
+                String path = request.getServletContext().getRealPath("/") + "blog_images" + File.separator + blogImage;
+                FileHandler.saveFile(file.getInputStream(), path);
+                out.println("success");
             } else {
-//                out.println("Fail");
-                Message message = new Message("Holy guacamole!", "Update process failed.", "error", "alert-danger");      
-                session.setAttribute("message", message);
+                out.println("fail");
             }
-            response.sendRedirect("profile.jsp");
         }
     }
 
