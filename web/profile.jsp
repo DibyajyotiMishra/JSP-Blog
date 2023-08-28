@@ -108,6 +108,42 @@
         %>
 
 
+        <!--Page Contents-->
+
+        <main>
+            <div class="container">
+                <div class="row mt-4">
+                    <div class="col-md-4">
+                        <div class="list-group">
+                            <a href="#" class="list-group-item list-group-item-action active" aria-current="true">
+                                For You
+                            </a>
+                            <% 
+                                BlogDao blogsDao = new BlogDao(ConnectionProvider.getConnection());
+                                ArrayList<Category> categoryList = blogsDao.getAllCategories();
+                                for(Category category: categoryList) {
+                            %>
+                            <a href="#" class="list-group-item list-group-item-action"><%= category.getCategoryName() %></a>
+                            <% 
+                                }
+                            %>
+                        </div>
+                    </div>
+                        <div class="col-md-8">
+                            <div class="container text-center mt-5" id="loader">
+                                <i class="fa fa-refresh fa-3x fa-spin"></i>
+                                <h5 class="mt-2">Hang on we are crunching lots of data for you...</h5>
+                            </div>
+                            <div class="container-fluid mt-5" id="blog-container">
+                                
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </main>
+
+        <!--Page Contents-->
+
 
         <!--Profile Modal-->
 
@@ -218,7 +254,7 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js" integrity="sha384-mQ93GR66B00ZXjt0YO5KlohRA5SY2XofN4zfuZxLkoj1gXtW8ANNCe9d5Y3eG5eD" crossorigin="anonymous"></script>
         <!--<srcipt src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></srcipt>-->
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        
+
         <script src="js/index.js" type="text/javascript"></script>
         <script>
             $(document).ready(function () {
@@ -254,7 +290,7 @@
                         data: formData,
                         success: function (data, textStatus, jqXHR) {
                             console.log(data);
-                            if(data.trim() == "success") {
+                            if (data.trim() == "success") {
                                 Swal.fire({
                                     title: "Yayyy!!!",
                                     icon: 'success',
@@ -262,7 +298,7 @@
                                     showCloseButton: true,
                                 });
                             } else {
-                                Swal.fire({ title: "Aiyooo!!!", text: "Blog couldnot be saved.", icon: "error", showCloseButton: true });
+                                Swal.fire({title: "Aiyooo!!!", text: "Blog couldnot be saved.", icon: "error", showCloseButton: true});
                             }
                         },
                         error: function (jqXHR, textStatus, errorThrown) {
@@ -274,5 +310,18 @@
                 })
             });
         </script>
-</body>
+        
+        <!--Fetching blogs-->
+        <script>
+            $(document).ready(function(e) {
+                $.ajax({
+                    url: "load_blogs.jsp",
+                    success: function(data, textStatus, jqXHR) {
+                        $('#loader').hide();
+                        $('#blog-container').html(data);
+                    }
+                })
+            })
+        </script>
+    </body>
 </html>
