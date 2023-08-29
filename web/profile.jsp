@@ -115,7 +115,7 @@
                 <div class="row mt-4">
                     <div class="col-md-4">
                         <div class="list-group">
-                            <a href="#" class="list-group-item list-group-item-action active" aria-current="true">
+                            <a href="#" onclick="getPosts(0, this)" class="c-link list-group-item list-group-item-action active" aria-current="true">
                                 For You
                             </a>
                             <% 
@@ -123,7 +123,7 @@
                                 ArrayList<Category> categoryList = blogsDao.getAllCategories();
                                 for(Category category: categoryList) {
                             %>
-                            <a href="#" class="list-group-item list-group-item-action"><%= category.getCategoryName() %></a>
+                            <a href="#" onclick="getPosts(<%= category.getCategoryId() %>, this)" class="c-link list-group-item list-group-item-action"><%= category.getCategoryName() %></a>
                             <% 
                                 }
                             %>
@@ -313,14 +313,25 @@
         
         <!--Fetching blogs-->
         <script>
-            $(document).ready(function(e) {
+            function getPosts(categoryId, ref) {
+                $("#loader").show();
+                $('#blog-container').hide();
+                
+                $(".c-link").removeClass("active");
+                $(ref).addClass("active");
                 $.ajax({
                     url: "load_blogs.jsp",
+                    data: {categoryId: categoryId},
                     success: function(data, textStatus, jqXHR) {
                         $('#loader').hide();
+                        $('#blog-container').show();
                         $('#blog-container').html(data);
                     }
                 })
+            }
+            $(document).ready(function(e) {
+                let allBlogsRef = $(".c-link")[0];
+                getPosts(0, allBlogsRef);
             })
         </script>
     </body>
