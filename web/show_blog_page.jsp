@@ -3,6 +3,7 @@
     Created on : 06-Sep-2023, 5:29:55 PM
     Author     : dibyajyotimishra
 --%>
+<%@page import="com.wave.dao.LikeDao"%>
 <%@page import="com.wave.dao.UserDao"%>
 <%@page import="com.wave.entities.Blog"%>
 <%@page import="com.wave.entities.Category"%>
@@ -56,13 +57,15 @@
                 font-size: 32px;
                 font-family: "Poppins";
             }
-            
+
             .blog-content {
                 font-weight: 100;
                 font-size: 18px;
                 font-family: "Poppins";
             }
         </style>
+        <div id="fb-root"></div>
+        <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v17.0" nonce="iiO7MAyO"></script>
     </head>
     <body>
         <!--navbar-->
@@ -122,22 +125,31 @@
                         </div>
                         <div class="card-body">
                             <img class="card-img-top my-1" src="blog_images/<%= blog.getBlogImage()%>" alt="alt"/>
-                            
+
                             <div class="row">
                                 <div class="col-md-6"></div>
                                 <div class="col-md-6">
-                                    <p class="py-3" style="font-weight: 200; font-style: italic;">Written by: <%= author.getFirstName() + " " + author.getLastName() %></p>
+                                    <p class="py-3" style="font-weight: 200; font-style: italic;">Written by: <%= author.getFirstName() + " " + author.getLastName()%></p>
                                 </div>
                             </div>
-                            
+
                             <p class="blog-content"><%= blog.getBlogContent()%></p>
-                            
-                            <p style="font-weight:bold;">Published on: <%= blog.getCreatedOn().toString() %>.</p>
-                            
+
+                            <p style="font-weight:bold;">Published on: <%= blog.getCreatedOn().toString()%>.</p>
+
                         </div>
                         <div class="card-footer">
-                            <a href="#!" class="btn btn-outline-primary btn-sm"><i class="fa fa-thumbs-o-up">&nbsp;<span>10</span></i></a>
+                            <%
+                                LikeDao likeDao = new LikeDao(ConnectionProvider.getConnection());
+                                int likes = likeDao.getAllLikes(blogId);
+                            %>
+
+                            <a href="#!" onclick="updateLikes(<%= blogId%>)" class="btn btn-outline-primary btn-sm"><i class="fa fa-thumbs-o-up">&nbsp;<span class="like-counter"><%= likes%></span></i></a>
                             <a href="#!" class="btn btn-outline-primary btn-sm"><i class="fa fa-commenting-o">&nbsp;<span>20</span></i></a>
+                        </div>
+
+                        <div class="card-footer">
+                            <div class="fb-comments" data-href="http://localhost:9494/wave/show_blog_page.jsp?blog_id=<%= blogId %>" data-width="25" data-numposts="5"></div>
                         </div>
                     </div>
                 </div>
@@ -258,26 +270,26 @@
         <!--<srcipt src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></srcipt>-->
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-        <script src="js/index.js" type="text/javascript"></script>
+        <script src="./js/index.js" type="text/javascript"></script>
         <script>
-            $(document).ready(function () {
-                let editStatus = false;
-                $('#edit-btn').click(function () {
-                    editStatus = !(editStatus == true);
-                    if (editStatus) {
-                        $('#profile-details').hide();
-                        $('#profile-edit').show();
-                        $('#save-btn').show();
-                        $(this).text("Exit").removeClass("btn-outline-primary").addClass("btn-outline-danger")
-                    } else {
-                        $('#profile-details').show();
-                        $('#profile-edit').hide();
-                        $('#save-btn').hide();
-                        $(this).text("Edit").removeClass("btn-outline-danger").addClass("btn-outline-primary");
-                    }
+                                $(document).ready(function () {
+                                    let editStatus = false;
+                                    $('#edit-btn').click(function () {
+                                        editStatus = !(editStatus == true);
+                                        if (editStatus) {
+                                            $('#profile-details').hide();
+                                            $('#profile-edit').show();
+                                            $('#save-btn').show();
+                                            $(this).text("Exit").removeClass("btn-outline-primary").addClass("btn-outline-danger")
+                                        } else {
+                                            $('#profile-details').show();
+                                            $('#profile-edit').hide();
+                                            $('#save-btn').hide();
+                                            $(this).text("Edit").removeClass("btn-outline-danger").addClass("btn-outline-primary");
+                                        }
 
-                });
-            });
+                                    });
+                                });
         </script>
         <!-- Add New Blog--> 
         <script>

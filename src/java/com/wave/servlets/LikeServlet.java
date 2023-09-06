@@ -1,30 +1,19 @@
 package com.wave.servlets;
 
-import com.wave.dao.BlogDao;
 import com.wave.dao.LikeDao;
-import com.wave.entities.Blog;
-import com.wave.entities.Like;
-import com.wave.entities.User;
 import com.wave.helpers.ConnectionProvider;
-import com.wave.helpers.FileHandler;
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.Part;
 
 /**
  *
  * @author dibyajyotimishra
  */
-
-@MultipartConfig
-public class CreateBlogServlet extends HttpServlet {
+public class LikeServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -40,30 +29,10 @@ public class CreateBlogServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try ( PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
-            
-            String blogTitle = request.getParameter("blogTitle");
-            String blogContent = request.getParameter("blogContent");
-            int categoryId = Integer.parseInt(request.getParameter("categoryId"));
-            Part file = request.getPart("blogImage");
-            String blogImage = file.getSubmittedFileName();
-            HttpSession session = request.getSession();
-            User user = (User) session.getAttribute("currentUser");
-            int authorId = user.getUserId();
-            
-            Blog blog = new Blog(blogTitle, blogContent, blogImage, categoryId, authorId);
-            BlogDao blogDao = new BlogDao(ConnectionProvider.getConnection());
-            
-            if(blogDao.saveBlog(blog)) {
-                String path = request.getServletContext().getRealPath("/") + "blog_images" + File.separator + blogImage;
-                FileHandler.saveFile(file.getInputStream(), path);
-                int blogId = blogDao.getLastBlog();
-                Like like = new Like(0, blogId);
-                LikeDao likeDao = new LikeDao(ConnectionProvider.getConnection());
-                likeDao.createLikes(blogId);
-                out.println("success");
-            } else {
-                out.println("fail");
-            }
+            int blogId = Integer.parseInt(request.getParameter("blogId"));
+            LikeDao likeDao = new LikeDao(ConnectionProvider.getConnection());
+            int likes = likeDao.setLikes(blogId);
+            out.println(likes);
         }
     }
 

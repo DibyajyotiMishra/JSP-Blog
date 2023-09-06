@@ -4,6 +4,7 @@
     Author     : dibyajyotimishra
 --%>
 
+<%@page import="com.wave.dao.LikeDao"%>
 <%@page import="com.wave.entities.Blog"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="com.wave.helpers.ConnectionProvider"%>
@@ -45,8 +46,13 @@
                        max-width: 25ch;"><%= blog.getBlogContent()%></p>
                 </div>
                 <div class="card-footer">
+                    <% 
+                                LikeDao likeDao = new LikeDao(ConnectionProvider.getConnection());
+                                int likes = likeDao.getAllLikes(blog.getBlogId());
+                            %>
+                            
                     <a href="show_blog_page.jsp?blog_id=<%= blog.getBlogId() %>" class="btn btn-outline-primary btn-sm">Read more...</a>
-                    <a href="#!" class="btn btn-outline-primary btn-sm"><i class="fa fa-thumbs-o-up">&nbsp;<span>10</span></i></a>
+                    <a href="#!" onclick="updateLikes(<%= blog.getBlogId() %>)" class="btn btn-outline-primary btn-sm"><i class="fa fa-thumbs-o-up">&nbsp;<span class="like-counter"><%= likes %></span></i></a>
                     <a href="#!" class="btn btn-outline-primary btn-sm"><i class="fa fa-commenting-o">&nbsp;<span>20</span></i></a>
                 </div>
             </div>

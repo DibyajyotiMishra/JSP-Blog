@@ -15,6 +15,10 @@
         <servlet-name>CreateBlogServlet</servlet-name>
         <servlet-class>com.wave.servlets.CreateBlogServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>LikeServlet</servlet-name>
+        <servlet-class>com.wave.servlets.LikeServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>RegisterServlet</servlet-name>
         <url-pattern>/register</url-pattern>
@@ -26,6 +30,10 @@
     <servlet-mapping>
         <servlet-name>CreateBlogServlet</servlet-name>
         <url-pattern>/createNewBlog</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>LikeServlet</servlet-name>
+        <url-pattern>/like</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

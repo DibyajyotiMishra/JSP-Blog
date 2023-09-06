@@ -138,4 +138,19 @@ public class BlogDao {
         } 
         return blog;
     }
+    
+    public int getLastBlog() {
+        int blogId = 0;
+        try {
+            String query = "select id from blogs order by id desc limit 1";
+            PreparedStatement statement = this.connection.prepareStatement(query);
+            ResultSet result = statement.executeQuery();
+            if(result.next()) {
+                blogId = result.getInt("id");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return blogId;
+    }
 }
