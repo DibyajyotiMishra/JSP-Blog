@@ -1,9 +1,10 @@
 <%-- 
-   Document   : profile
-   Created on : 23-Feb-2023, 11:48:42 AM
-   Author     : dibyajyotimishra
+    Document   : show_blog_page
+    Created on : 06-Sep-2023, 5:29:55 PM
+    Author     : dibyajyotimishra
 --%>
-
+<%@page import="com.wave.dao.UserDao"%>
+<%@page import="com.wave.entities.Blog"%>
 <%@page import="com.wave.entities.Category"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="com.wave.dao.BlogDao"%>
@@ -19,11 +20,20 @@
     }
 %>
 
+<%
+    int blogId = Integer.parseInt(request.getParameter("blog_id"));
+    BlogDao blogDao = new BlogDao(ConnectionProvider.getConnection());
+    Blog blog = blogDao.getBlogById(blogId);
+    UserDao userDao = new UserDao(ConnectionProvider.getConnection());
+    User author = userDao.getUserById(blog.getAuthorId());
+%> 
+
+
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Profile | Wave</title>
+        <title><%= blog.getBlogTitle()%></title>
 
         <!--Favicon Scripts-->
         <link rel="apple-touch-icon" sizes="180x180" href="img/favicon/apple-touch-icon.png">
@@ -41,10 +51,20 @@
                 background: rgba(1, 43, 76, 0.95) !important;
 
             }
+            .blog-title {
+                font-weight: 300;
+                font-size: 32px;
+                font-family: "Poppins";
+            }
+            
+            .blog-content {
+                font-weight: 100;
+                font-size: 18px;
+                font-family: "Poppins";
+            }
         </style>
     </head>
     <body>
-
         <!--navbar-->
 
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="background: #012B4C !important">
@@ -56,7 +76,7 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="#">Home</a>
+                            <a class="nav-link active" aria-current="page" href="profile.jsp">Home</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#">About</a>
@@ -91,58 +111,41 @@
 
         <!--navbar-->
 
-        <%
-            Message message = (Message) session.getAttribute("message");
-            if (message != null) {
-        %>
-
-        <div class="alert <%= message.getCssClass()%> alert-dismissible fade show" role="alert">
-            <strong> <%= message.getMessageReaction()%> </strong> <%= message.getMessageContent()%>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-
-
-        <%
-                session.removeAttribute("message");
-            }
-        %>
-
-
         <!--Page Contents-->
 
-        <main>
-            <div class="container">
-                <div class="row mt-4">
-                    <div class="col-md-4">
-                        <div class="list-group">
-                            <a href="#" onclick="getPosts(0, this)" class="c-link list-group-item list-group-item-action active" aria-current="true">
-                                For You
-                            </a>
-                            <% 
-                                BlogDao blogsDao = new BlogDao(ConnectionProvider.getConnection());
-                                ArrayList<Category> categoryList = blogsDao.getAllCategories();
-                                for(Category category: categoryList) {
-                            %>
-                            <a href="#" onclick="getPosts(<%= category.getCategoryId() %>, this)" class="c-link list-group-item list-group-item-action"><%= category.getCategoryName() %></a>
-                            <% 
-                                }
-                            %>
+        <div class="container container-fluid">
+            <div class="row my-4">
+                <div class="col-md-8 offset-md-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="blog-title"> <%= blog.getBlogTitle()%></h4>
+                        </div>
+                        <div class="card-body">
+                            <img class="card-img-top my-1" src="blog_images/<%= blog.getBlogImage()%>" alt="alt"/>
+                            
+                            <div class="row">
+                                <div class="col-md-6"></div>
+                                <div class="col-md-6">
+                                    <p class="py-3" style="font-weight: 200; font-style: italic;">Written by: <%= author.getFirstName() + " " + author.getLastName() %></p>
+                                </div>
+                            </div>
+                            
+                            <p class="blog-content"><%= blog.getBlogContent()%></p>
+                            
+                            <p style="font-weight:bold;">Published on: <%= blog.getCreatedOn().toString() %>.</p>
+                            
+                        </div>
+                        <div class="card-footer">
+                            <a href="#!" class="btn btn-outline-primary btn-sm"><i class="fa fa-thumbs-o-up">&nbsp;<span>10</span></i></a>
+                            <a href="#!" class="btn btn-outline-primary btn-sm"><i class="fa fa-commenting-o">&nbsp;<span>20</span></i></a>
                         </div>
                     </div>
-                        <div class="col-md-8">
-                            <div class="container text-center mt-5" id="loader">
-                                <i class="fa fa-refresh fa-3x fa-spin"></i>
-                                <h5 class="mt-2">Hang on we are crunching lots of data for you...</h5>
-                            </div>
-                            <div class="container-fluid mt-5" id="blog-container">
-                                
-                            </div>
-                        </div>
                 </div>
             </div>
-        </main>
+        </div>
 
         <!--Page Contents-->
+
 
 
         <!--Profile Modal-->
@@ -227,8 +230,8 @@
                                 <select name="categoryId" class="form-control">
                                     <option selected disabled>Pick a Genre.</option>
                                     <%
-                                        BlogDao blogDao = new BlogDao(ConnectionProvider.getConnection());
-                                        ArrayList<Category> categories = blogDao.getAllCategories();
+                                        BlogDao dao = new BlogDao(ConnectionProvider.getConnection());
+                                        ArrayList<Category> categories = dao.getAllCategories();
                                         for (Category category : categories) {
 
                                     %>
@@ -309,30 +312,6 @@
                     })
                 })
             });
-        </script>
-        
-        <!--Fetching blogs-->
-        <script>
-            function getPosts(categoryId, ref) {
-                $("#loader").show();
-                $('#blog-container').hide();
-                
-                $(".c-link").removeClass("active");
-                $(ref).addClass("active");
-                $.ajax({
-                    url: "load_blogs.jsp",
-                    data: {categoryId: categoryId},
-                    success: function(data, textStatus, jqXHR) {
-                        $('#loader').hide();
-                        $('#blog-container').show();
-                        $('#blog-container').html(data);
-                    }
-                })
-            }
-            $(document).ready(function(e) {
-                let allBlogsRef = $(".c-link")[0];
-                getPosts(0, allBlogsRef);
-            })
         </script>
     </body>
 </html>

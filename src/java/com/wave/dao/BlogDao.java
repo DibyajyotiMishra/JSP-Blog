@@ -113,5 +113,29 @@ public class BlogDao {
 
         return blogs;
     }
-
+    
+    
+    public Blog getBlogById(int id) {
+        Blog blog = null;
+        try {
+            String query = "select * from blogs where id = ?";
+            PreparedStatement statement = this.connection.prepareStatement(query);
+            statement.setInt(1, id );
+            ResultSet result = statement.executeQuery();
+            while(result.next()) {
+                int blogId = result.getInt("id");
+                String blogTitle = result.getString("title");
+                String blogContent = result.getString("content");
+                String blogImage = result.getString("image");
+                int authorId = result.getInt("author");
+                String createdOn = result.getString("createdOn");
+                int categoryId = result.getInt("categoryId");
+                blog = new Blog(blogId, blogTitle, blogContent, blogImage, categoryId, authorId);
+                return blog;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } 
+        return blog;
+    }
 }
